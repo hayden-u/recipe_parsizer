@@ -4,14 +4,22 @@ from recipe_scrapers import scrape_me
 # to get ingredients for each step, 
 
 
+
+
 # step class
 class recipeStep:
-    def __init__(self, step_num, step_text):
+    def __init__(self, step_num, step_text, step_ingredients):
         self.step_num = step_num
         self.step_text = step_text
+        self.ingredients = step_ingredients
     def __str__(self):
         return "Step " + str(self.step_num) + ": " + self.step_text
-
+        
+#ingredients will be a field of recipe step, with step 0 holding all of the ingredients
+class ingredient:
+    def __init__(self, ingredient):
+        self.ingredient = ingredient
+    
 def recipe_scraper(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     return scraper.ingredients()
@@ -38,13 +46,20 @@ def printSteps(recipe_steps):
     for element in recipe_steps:
         print(element)
 
+def printIngredients(ingredients):
+    for i in ingredients:
+        #i = ingredient(i)
+        print(i)
+
 
 if __name__ == "__main__":
     print("Welcome to Recipe Extravaganza!\n")
     printHelp()
     recipe = input("Please give me a link to a recipe:\n")
     print("Holy Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
-    print(recipe_scraper(recipe))
+    #print(recipe_scraper(recipe))
+    printIngredients(recipe_ingredients(recipe))
+
 
     '''
     while True:
