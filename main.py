@@ -31,7 +31,7 @@ class recipeStep:
         self.ingredients = []
         self.materials = []
     def __str__(self):
-        return "Step " + str(self.step_num) + ": " + self.step_text
+        return "Step " + str(self.step_num) + ": " + self.step_text + "\n" + "Step Ingredients: " + str(self.ingredients)
         
 #ingredients will be a field of recipe step, with step 0 holding all of the ingredients
 class ingredient:
@@ -43,35 +43,63 @@ class ingredient:
             self.quantity = int(self.quantity)
         self.unit = temp[1]
 
+    def __str__(self):
+        return "Ingredient: " + str(self.ingredient) + " | Quantity: " + str(self.quantity) 
+
 def recipe_scraper(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     return scraper.instructions_list()
 
+# def findStepIngredients(stepClass):
+#     #function will find each individual ingredient in the given step
+#     # then populate the step class ingredient field
+#     text = stepClass.step_text.lower()
+#     document = nlp(text)
+#     ingredient_list = []
+#     for sent in document.sentences:
+#         for word in sent.words:
+#             if word.upos == "NOUN":
+#                 ing_dict = { "text": word.text,
+#                              "id" : word.id,
+#                              "head": word.head}
+#                 ingredient_list.append(ing_dict)
+#     #printPOS(document)
+#     #printRelation(document)
+#     #pos_tagged = nltk.pos_tag(tokenized)
+#     #print(pos_tagged)
+#     #print(ingredient_list)
+#     pass
+
+
+def traverseTree(root, some_list):
+    #print(some_list)
+    if root.label == "NP":
+        full_str = ""
+        for child in root.children:
+            if child.label == "NN" or child.label == "NNS":
+                for c in child.children:
+                    full_str = full_str + str(c.label) + " "                
+            else:
+                continue
+        if full_str != "":
+            some_list.append(full_str[0:len(full_str)-1])
+
+    for child in root.children:
+        traverseTree(child, some_list)
+
+    return some_list
+
 def findStepIngredients(stepClass):
-    #function will find each individual ingredient in the given step
-    # then populate the step class ingredient field
-    text = stepClass.step_text.lower()
-    document = nlp(text)
-    ingredient_list = []
-    for sent in document.sentences:
-        for word in sent.words:
-            if word.upos == "NOUN":
-                ing_dict = { "text": word.text,
-                             "id" : word.id,
-                             "head": word.head}
-                ingredient_list.append(ing_dict)
-    #printPOS(document)
-    #printRelation(document)
-    #pos_tagged = nltk.pos_tag(tokenized)
-    #print(pos_tagged)
-    #print(ingredient_list)
-    pass
+    doc = nlp(stepClass.step_text.lower())
+    tree = doc.sentences[0].constituency
+    some_list = []
+    stepClass.ingredients = traverseTree(tree, some_list)
 
 def buildStepsArray(instructions):
     steps_array = []
 
     for c, element in enumerate(instructions):
-        
+        #print("Loading Step " + str(c+1))
         step = recipeStep(c+1, element)
         findStepIngredients(step)
         steps_array.append(step)
@@ -242,22 +270,26 @@ def GoogleSearchDefinition(stringg):
 if __name__ == "__main__":
     # print("Start of Program")
     # # yaki udon
-    # instructions_list = recipe_scraper("https://www.allrecipes.com/recipe/8539106/yaki-udon/")
+    instructions_list = recipe_scraper("https://www.allrecipes.com/recipe/8539106/yaki-udon/")
     # #print(instructions_list)
 
     # #text = "fold butter into flour"
     # text = "whisk vigorously"
     # print(GoogleSearchDefinition(text))
+    recipe = "https://www.allrecipes.com/recipe/8539106/yaki-udon/"
+    #recipe_ingredients(recipe)
+    #for i in all_ingredients:
+    #    print(i)
 
-    # new_instructions_list = []
-    # for instruction in instructions_list:
-    #     new_instructions_list += sent_tokenize(instruction)
+    new_instructions_list = []
+    for instruction in instructions_list:
+        new_instructions_list += sent_tokenize(instruction)
 
     # #print(new_instructions_list)
     # # recipe_steps hold our array of Step classes for navigation
-    # recipe_steps = buildStepsArray(new_instructions_list)
-
+    recipe_steps = buildStepsArray(new_instructions_list)
+    printSteps(recipe_steps)
     # #printSteps(recipe_steps)
 
-    runChatbot()
+    #runChatbot()
    

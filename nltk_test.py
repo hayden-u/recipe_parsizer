@@ -1,21 +1,28 @@
-#import nltk
-#from nltk import pos_tag, sent_tokenize, word_tokenize, RegexpParser
+import nltk
+from nltk import pos_tag, sent_tokenize, word_tokenize, RegexpParser
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
 import stanza
-#stanza.download('en')
+#stanza.download('en'
 nlp = stanza.Pipeline(lang='en', verbose=False)
 
-sample_text = "Whisk together oyster sauce, soy sauce, mirin, rice vinegar, Worcestershire, sesame oil, sugar, Sriracha, and garlic in a small bowl; set aside."
+def traverseTree(root, some_list):
+    #print(some_list)
+    if root.label == "NP":
+        full_str = ""
+        for child in root.children:
+            if child.label == "NN" or child.label == "NNS":
+                for c in child.children:
+                    full_str = full_str + str(c.label) + " "                
+            else:
+                continue
+        if full_str != "":
+            some_list.append(full_str[0:len(full_str)-1])
 
-doc = nlp(sample_text)
-tree = doc.sentences[0].constituency
-#tree.pformat()
-#tagged = pos_tag(word_tokenize(sample_text))
+    for child in root.children:
+        traverseTree(child, some_list)
 
-#entities = nltk.ne_chunk(tagged)
-
-#print(entities)
+    return some_list
 
 def printTree(tree, markerStr="+- ", levelMarkers=[]):
     emptyStr = " "*len(markerStr)
@@ -30,4 +37,12 @@ def printTree(tree, markerStr="+- ", levelMarkers=[]):
         isLast = i == len(tree.children) - 1
         printTree(child, markerStr, [*levelMarkers, not isLast])
 
+sample_text = "Remove root ends from scallions and discard."
+
+doc = nlp(sample_text.lower())
+tree = doc.sentences[0].constituency
+
 printTree(tree)
+empty_list = []
+new_list = traverseTree(tree, empty_list)
+print(new_list)
