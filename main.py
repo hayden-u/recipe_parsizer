@@ -5,7 +5,7 @@ from recipe_scrapers import scrape_me
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
 import stanza
-#stanza.download('en')
+stanza.download('en')
 nlp = stanza.Pipeline(lang='en')
 
 # to get ingredients for each step, 
@@ -39,8 +39,8 @@ def findStepIngredients(stepClass):
     # then populate the step class ingredient field
     text = stepClass.step_text.lower()
     document = nlp(text)
-    pos_tagged = nltk.pos_tag(tokenized)
-    print(pos_tagged)
+    #pos_tagged = nltk.pos_tag(tokenized)
+    #print(pos_tagged)
     pass
 
 def buildStepsArray(instructions):
