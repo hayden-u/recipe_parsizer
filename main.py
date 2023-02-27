@@ -277,9 +277,9 @@ if __name__ == "__main__":
     # text = "whisk vigorously"
     # print(GoogleSearchDefinition(text))
     recipe = "https://www.allrecipes.com/recipe/8539106/yaki-udon/"
-    #recipe_ingredients(recipe)
-    #for i in all_ingredients:
-    #    print(i)
+    recipe_ingredients(recipe)
+    for i in all_ingredients:
+        print(i)
 
     new_instructions_list = []
     for instruction in instructions_list:
