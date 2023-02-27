@@ -1,0 +1,74 @@
+
+Sentence: "Whisk together oyster sauce, soy sauce, mirin, rice vinegar, Worcestershire, 
+sesame oil, sugar, Sriracha, and garlic in a small bowl; set aside.', 'Remove root ends 
+from scallions and discard."
+
+POS TAGGING
+______________________________________________________________________________________
+word: whisk     upos: VERB      xpos: VB        feats: Mood=Imp|Person=2|VerbForm=Fin
+word: together  upos: ADV       xpos: RB        feats: _
+word: oyster    upos: NOUN      xpos: NN        feats: Number=Sing
+word: sauce     upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: soy       upos: NOUN      xpos: NN        feats: Number=Sing
+word: sauce     upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: mirin     upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: rice      upos: NOUN      xpos: NN        feats: Number=Sing
+word: vinegar   upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: worcestershire    upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: sesame    upos: NOUN      xpos: NN        feats: Number=Sing
+word: oil       upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: sugar     upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: sriracha  upos: NOUN      xpos: NN        feats: Number=Sing
+word: ,         upos: PUNCT     xpos: , feats: _
+word: and       upos: CCONJ     xpos: CC        feats: _
+word: garlic    upos: NOUN      xpos: NN        feats: Number=Sing
+word: in        upos: ADP       xpos: IN        feats: _
+word: a         upos: DET       xpos: DT        feats: Definite=Ind|PronType=Art
+word: small     upos: ADJ       xpos: JJ        feats: Degree=Pos
+word: bowl      upos: NOUN      xpos: NN        feats: Number=Sing
+word: ;         upos: PUNCT     xpos: , feats: _
+word: set       upos: VERB      xpos: VB        feats: Mood=Imp|VerbForm=Fin
+word: aside     upos: ADV       xpos: RB        feats: _
+word: .         upos: PUNCT     xpos: . feats: _
+
+DEPENDECY RELATIONSHIPS:
+______________________________________________________________________________________
+id: 1   word: whisk     head id: 0      head: root      deprel: root
+id: 2   word: together  head id: 1      head: whisk     deprel: advmod
+id: 3   word: oyster    head id: 4      head: sauce     deprel: compound
+id: 4   word: sauce     head id: 1      head: whisk     deprel: obj
+id: 5   word: ,         head id: 7      head: sauce     deprel: punct
+id: 6   word: soy       head id: 7      head: sauce     deprel: compound
+id: 7   word: sauce     head id: 4      head: sauce     deprel: conj
+id: 8   word: ,         head id: 9      head: mirin     deprel: punct
+id: 9   word: mirin     head id: 4      head: sauce     deprel: conj
+id: 10  word: ,         head id: 12     head: vinegar   deprel: punct
+id: 11  word: rice      head id: 12     head: vinegar   deprel: compound
+id: 12  word: vinegar   head id: 4      head: sauce     deprel: conj
+id: 13  word: ,         head id: 14     head: worcestershire    deprel: punct
+id: 14  word: worcestershire    head id: 4      head: sauce     deprel: conj
+id: 15  word: ,         head id: 17     head: oil       deprel: punct
+id: 16  word: sesame    head id: 17     head: oil       deprel: compound
+id: 17  word: oil       head id: 4      head: sauce     deprel: conj
+id: 18  word: ,         head id: 19     head: sugar     deprel: punct
+id: 19  word: sugar     head id: 4      head: sauce     deprel: conj
+id: 20  word: ,         head id: 21     head: sriracha  deprel: punct
+id: 21  word: sriracha  head id: 4      head: sauce     deprel: conj
+id: 22  word: ,         head id: 24     head: garlic    deprel: punct
+id: 23  word: and       head id: 24     head: garlic    deprel: cc
+id: 24  word: garlic    head id: 4      head: sauce     deprel: conj
+id: 25  word: in        head id: 28     head: bowl      deprel: case
+id: 26  word: a         head id: 28     head: bowl      deprel: det
+id: 27  word: small     head id: 28     head: bowl      deprel: amod
+id: 28  word: bowl      head id: 24     head: garlic    deprel: nmod
+id: 29  word: ;         head id: 30     head: set       deprel: punct
+id: 30  word: set       head id: 1      head: whisk     deprel: parataxis
+id: 31  word: aside     head id: 30     head: set       deprel: advmod
+id: 32  word: .         head id: 1      head: whisk     deprel: punct
