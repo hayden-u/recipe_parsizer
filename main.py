@@ -5,7 +5,7 @@ from recipe_scrapers import scrape_me
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
 import stanza
-stanza.download('en')
+#stanza.download('en')
 nlp = stanza.Pipeline(lang='en')
 
 # to get ingredients for each step, 
@@ -135,7 +135,8 @@ if __name__ == "__main__":
     new_instructions_list = []
     for instruction in instructions_list:
         new_doc = nlp(instruction)
-        new_instructions_list += new_doc.sentences()
+        print(new_doc.sentences)
+        new_instructions_list += new_doc.sentences
 
     print(new_instructions_list)
     # recipe_steps hold our array of Step classes for navigation
