@@ -213,6 +213,10 @@ def runChatbot():
             text = "fold butter into flour"
             print("\nHere's a link to what Google foud as the definition of the action you want clarity on:\n")
             print(GoogleSearchDefinition(text))
+        elif query == "10":
+            text = "cut an onion"
+            print("\nHere's a link to a helpful Youtube Search for a video thank can show you how to ", text, ":\n")
+            print(YoutubeSearch(text))
         else:
             print("\nI’m sorry, I do not understand your question. Here is the help menu for a list of questions I know how to answer:\n")
             printHelp()
@@ -264,7 +268,26 @@ def GoogleSearchDefinition(stringg):
     text = soup.get_text()
     return(url)
     
+def YoutubeSearch(stringg):
+    temp = stringg.split(" ")
+    text = text + "how+to+"
+    text = "+".join(temp)
+    url = 'https://www.youtube.com/results?search_query=' + text
+    
+    request_result=requests.get( url )
+    # Creating soup from the fetched request
+    soup = bs4.BeautifulSoup(request_result.text, "html.parser")
+    #return(soup)    
+    # heading_object=soup.find_all( 'h3' )
 
+    # # Iterate through the object 
+    # # and print it as a string.
+    # for info in heading_object:
+    #     print(info.getText())
+    #     print("------")
+    #soup = BeautifulSoup(r.content, 'html5lib')
+    text = soup.get_text()
+    return(url)
 
 
 if __name__ == "__main__":
