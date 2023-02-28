@@ -217,7 +217,7 @@ def related(chat_in):
     elif "how do i" in chat_in:
         chat_out = []
         chat_out.append("10")
-        my_regex = "\s(how do i)"
+        my_regex = ".+(how do i)"
         new_str = re.sub(my_regex, "", chat_in)
         print(new_str)
         chat_out.append(new_str)
