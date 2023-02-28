@@ -31,20 +31,25 @@ class recipeStep:
         self.ingredients = []
         self.materials = []
     def __str__(self):
-        return "Step " + str(self.step_num) + ": " + self.step_text + "\n" + "Step Ingredients: " + str(self.ingredients)
+        return "Step " + str(self.step_num) + ": " + self.step_text + "\n"
         
 #ingredients will be a field of recipe step, with step 0 holding all of the ingredients
 class ingredient:
     def __init__(self, ingredient):
-        self.ingredient = ingredient
-        temp = ingredient.split()
+        self.ingredient_text = ingredient
+        my_regex = "\s\(.*?\)"
+        new_str = re.sub(my_regex, "", self.ingredient_text)
+        temp = new_str.split()
+        
         self.quantity = temp[0]
         if temp[0].isnumeric():
             self.quantity = int(self.quantity)
         self.unit = temp[1]
+        self.food_item = ""
 
     def __str__(self):
-        return "Ingredient: " + str(self.ingredient) + " | Quantity: " + str(self.quantity) 
+        return "Ingredient Text: " + str(self.ingredient_text) + "\n" + "Food Item: " + self.food_item + "\n" + "Quanity: " + str(self.quantity) + " " + str(self.unit) + "\n"
+
 
 def recipe_scraper(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
@@ -106,12 +111,28 @@ def buildStepsArray(instructions):
 
     return steps_array
 
+
+def buildIngredient(ingredient):
+    #print("Ingredient Text: " + ingredient.ingredient_text)
+    my_regex = my_regex = "\s\(.*?\)"
+    new_str = re.sub(my_regex, "", ingredient.ingredient_text)
+    #print("Regexed String: " + new_str + "\n")
+    doc = nlp(new_str.lower())
+    i_string = ""
+    
+    for word in doc.sentences[0].words[2:]:
+        if word.xpos == "NN" or word.xpos == "NNS" or word.xpos == "NNP":
+            i_string = i_string + " " + word.text
+    ingredient.food_item = i_string
+    return
+
 def recipe_ingredients(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     global all_ingredients
     all_ingredients = []
     for i in scraper.ingredients():
         i = ingredient(i)
+        buildIngredient(i)
         all_ingredients.append(i)
     return
 
@@ -123,9 +144,11 @@ def printHelp():
     print("4. What material(s) do I need here?\n")
     print("5. How much of ingredient ___ do I need?\n")
     print("6. What are all of the ingredients needed for this recipe?\n")
-    print("7. Any questions about timed aspects of the recipe\n")
+    print("7. Any questions about time or temperature in the recipe\n")
     print("8. Does this recipe (as a whole) call for ingredient___?\n")
-    print("9. How do I perform ___ cooking task?\n")
+    print("9. What is a(n) ____? (Will return a Google Search to define what you're looking for)\n")
+    print("10. How do I ____? (Will return a YouTube Search for a helpful video to show you how)\n")
+    print("11. Read this step again\n")
     #print("- Ask questions about the current step\n")
     #print("- Ask about the ingredients or utensils\n")
     #print("- Ask about the actions you need to perform\n")
@@ -137,86 +160,186 @@ def printSteps(recipe_steps):
 
 def printIngredients(ingredients):
     for i in ingredients:
-        print(i.ingredient)
+        print(i)
+
+def printAllIngredients(ingredients):
+    for i in ingredients:
+        print(i.ingredient_text)
+
+def related(chat_in):
+    chat_in = chat_in.lower()
+    chat_out = []
+
+    exit_conditions = ["quit"]
+    help_conditions = ["help"]
+
+    print(chat_in)
+
+    for i in exit_conditions:
+        if i in chat_in:
+            chat_out = []
+            chat_out.append("exit")
+            return chat_out
+    for i in help_conditions:
+        if i in chat_in:
+            chat_out = []
+            chat_out.append("help")
+            return chat_out
+    
+    if "next" in chat_in:
+        chat_out = []
+        chat_out.append("next")
+    elif "previous" in chat_in or "back" in chat_in:
+        print(chat_in)
+        chat_out = []
+        chat_out.append("2")
+    elif "what" in chat_in and ("ingredient" in chat_in or "ingredients" in chat_in) :
+        chat_out = []
+        chat_out.append("3")
+    elif "what" in chat_in and ("material" in chat_in or "materials" in chat_in or "utencils" in chat_in or "untencil" in chat_in) :
+        chat_out = []
+        chat_out.append("4")
+    elif "how much" in chat_in or "amount" in chat_in or "how many" in chat_in:
+        chat_out = []
+        chat_out.append("5")
+        for i in all_ingredients:
+            if i.food_item in chat_in:
+                chat_out.append(i.ingredient_text)
+                break
+        chat_out.append("it all")
+    elif "all" in chat_in and "ingredients" in chat_in:
+        chat_out = []
+        chat_out.append("6")
+    elif "temperature" in chat_in or "time" in chat_in or "minutes" in chat_in or "farenheit" in chat_in or "heat" in chat_in or "how long" in chat_in:
+        chat_out = []
+        chat_out.append("7")
+    elif "how do i" in chat_in:
+        chat_out = []
+        chat_out.append("10")
+        my_regex = "\s(how do i)"
+        new_str = re.sub(my_regex, "", chat_in)
+        print(new_str)
+        chat_out.append(new_str)
+    elif "what is" in chat_in or "what's a" in chat_in or "whats a" in chat_in or "what's an" in chat_in or "whats an" in chat_in:
+        chat_out = []
+        chat_out.append("9")
+        chat_out.append(chat_in)
+    elif "need" in chat_in or "do I" in chat_in or "call for" in chat_in:
+        chat_out = []
+        chat_out.append("8")
+        for i in all_ingredients:
+            print(i.food_item)
+            if i.food_item in chat_in:
+                chat_out.append(i.ingredient_text)
+    
+    elif "current" in chat_in:
+        chat_out = []
+        chat_out.append("11")
+    else:
+        chat_out = []
+        chat_out.append("1234567890")
+    return chat_out
 
 def runChatbot():
     print("Welcome to Recipe Extravaganza!\n")
     printHelp()
-    recipe = input("Please give me a link to a recipe:\n")
-    print("Holy Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
+    #recipe = input("Please give me a link to a recipe:\n")
+    #print("\nHoly Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
     #print(recipe_scraper(recipe))
-    instructions_list = recipe_scraper(recipe)
+    booli = True
+    while booli:
+        try:
+            recipe = input("Please give me a link to a recipe:\n")
+            instructions_list = recipe_scraper(recipe)
+            booli = False
+        except:
+            print("\nWhat, are you baked? You didn't give us a good link! Please try again\n")
+            
+    print("\nHoly Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
+
     recipe_ingredients(recipe)
-    printIngredients(all_ingredients)
+    printAllIngredients(all_ingredients)
+
+    new_instructions_list = []
+    for instruction in instructions_list:
+        new_instructions_list += sent_tokenize(instruction)
+
+    recipe_steps = buildStepsArray(new_instructions_list)
+
+    print("\nHere's the first step on your journey to a full belly:\n")
+    recipe_pointer = 0
+    print("\n", recipe_steps[recipe_pointer])
+
     term_size = os.get_terminal_size()
     print('=' * term_size.columns)
-    print("\nWhat else can I do for you?\n")
-
-    recipe_steps = buildStepsArray(instructions_list)
-
-    exit_conditions = ["quit"]
-    help_conditions = ["help"]
-    recipe_pointer = 0
-    
+    print("\nWhat else can I do for you?\n")   
     
     while True:
-        x = "sesame"
         query = input("")
+        query = related(query)
+        #x = "sesame"
         #chatbot exit
-        if query in exit_conditions:
+        print(query)
+        if query[0] == "exit":
             break
         #chatbot help
-        if query in help_conditions:
+        if query[0] == "help":
             printHelp()
-        if query == "next":
+        if query[0] == "next":
             if recipe_pointer >= len(recipe_steps) - 1:
                 print("\nWe've reached the end of our recipe, Bon Appetit!")
             else:
                 recipe_pointer += 1
                 print("\n", recipe_steps[recipe_pointer])
-        elif query == "2":
+        elif query[0] == "2":
             if recipe_pointer == 0:
                 print("\nSorry we can't go back a step, we are at Step #0")
             else:
                 recipe_pointer -= 1
                 print("\n", recipe_steps[recipe_pointer])
-        elif query == "3":
+        elif query[0] == "3":
             print("\nSure! Here are the ingredients you need for this step:\n")
             printIngredients(recipe_steps[recipe_pointer].ingredients)
-        elif query == "4":
+        elif query[0] == "4":
             print("\nNo problemo. Here are the materials you will need here:\n")
             print(recipe_steps[recipe_pointer].materials)
-        elif query == "5": ##pretend x is input of ingredient they are asking for
-            for i in all_ingredients:
-                temp = i.ingredient.split(" ")
-                for word in temp:
-                    if x == word:
-                        print("\nYou need", i.ingredient)
-                        break
-        elif query == "6":
+        elif query[0] == "5" and len(query) >= 2:
+            x = query[1]
+            print("\nYou need", x)
+            # for i in all_ingredients:
+            #     temp = i.ingredient.split(" ")
+            #     for word in temp:
+            #         if x == word:
+            #             print("\nYou need", i.ingredient)
+            #             break
+        elif query[0] == "6":
             print("\nHere’s the full list of ingredients for this recipe:\n")
-            printIngredients(all_ingredients)
-        elif query == "7":
+            printAllIngredients(all_ingredients)
+        elif query[0] == "7":
             print("\n", recipe_steps[recipe_pointer])
-        elif query == "8": ##pretend x is input of ingredient they are asking for
+        elif query[0] == "8": ##pretend x is input of ingredient they are asking for
             bool = False
-            for i in all_ingredients:
-                temp = i.ingredient.split(" ")
-                for word in temp:
-                    if x == word:
-                        bool = True
+            if len(query) >= 2:
+                x = query[1]
+                for i in all_ingredients:
+                    temp = i.ingredient_text.split(" ")
+                    for word in temp:
+                        if x == word:
+                            bool = True
             if bool:
                 print("\nYes, this recipe does include", x)
             else:
-                print("\nNo, this recipe does not include", x)
-        elif query == "9":
-            text = "fold butter into flour"
+                print("\nNo, that's not in this recipe")
+        elif query[0] == "9" and len(query) >= 2:
+            text = query[1]
             print("\nHere's a link to what Google foud as the definition of the action you want clarity on:\n")
             print(GoogleSearchDefinition(text))
-        elif query == "10":
-            text = "cut an onion"
-            print("\nHere's a link to a helpful Youtube Search for a video thank can show you how to ", text, ":\n")
+        elif query[0] == "10" and len(query) >= 2:
+            text = query[1]
+            print("\nHere's a link to a helpful Youtube Search for a video that can show you how to", text, ":\n")
             print(YoutubeSearch(text))
+        elif query[0] == "11":
+            print("\n", recipe_steps[recipe_pointer])
         else:
             print("\nI’m sorry, I do not understand your question. Here is the help menu for a list of questions I know how to answer:\n")
             printHelp()
@@ -224,8 +347,6 @@ def runChatbot():
         term_size = os.get_terminal_size()
         print('=' * term_size.columns)
         print("\nWhat else can I do for you?\n")
-
-    
 
 
 def GoogleSearchDefinition(stringg):
@@ -270,21 +391,21 @@ def GoogleSearchDefinition(stringg):
     
 def YoutubeSearch(stringg):
     temp = stringg.split(" ")
-    text = text + "how+to+"
-    text = "+".join(temp)
+    text = "how+to+"
+    text = text + "+".join(temp)
     url = 'https://www.youtube.com/results?search_query=' + text
     
     request_result=requests.get( url )
     # Creating soup from the fetched request
     soup = bs4.BeautifulSoup(request_result.text, "html.parser")
-    #return(soup)    
+    #return(soup)
     # heading_object=soup.find_all( 'h3' )
 
     # # Iterate through the object 
     # # and print it as a string.
     # for info in heading_object:
-    #     print(info.getText())
-    #     print("------")
+    #print(info.getText())
+    #print("------")
     #soup = BeautifulSoup(r.content, 'html5lib')
     text = soup.get_text()
     return(url)
@@ -293,26 +414,26 @@ def YoutubeSearch(stringg):
 if __name__ == "__main__":
     # print("Start of Program")
     # # yaki udon
-    instructions_list = recipe_scraper("https://www.allrecipes.com/recipe/8539106/yaki-udon/")
+    #instructions_list = recipe_scraper("https://www.allrecipes.com/recipe/8539106/yaki-udon/")
     # #print(instructions_list)
 
     # #text = "fold butter into flour"
     # text = "whisk vigorously"
     # print(GoogleSearchDefinition(text))
-    recipe = "https://www.allrecipes.com/recipe/8539106/yaki-udon/"
-    recipe_ingredients(recipe)
-    for i in all_ingredients:
-        print(i)
+    #recipe = "https://www.allrecipes.com/recipe/8539106/yaki-udon/"
+    #recipe_ingredients(recipe)
+    #for i in all_ingredients:
+        #print(i)
 
-    new_instructions_list = []
-    for instruction in instructions_list:
-        new_instructions_list += sent_tokenize(instruction)
+    #new_instructions_list = []
+    #for instruction in instructions_list:
+    #    new_instructions_list += sent_tokenize(instruction)
 
     # #print(new_instructions_list)
     # # recipe_steps hold our array of Step classes for navigation
-    recipe_steps = buildStepsArray(new_instructions_list)
-    printSteps(recipe_steps)
+    #recipe_steps = buildStepsArray(new_instructions_list)
+    #printSteps(recipe_steps)
     # #printSteps(recipe_steps)
 
-    #runChatbot()
+    runChatbot()
    
