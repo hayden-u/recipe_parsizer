@@ -4,6 +4,7 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 #nltk.download('punkt')
 #nltk.download('averaged_perceptron_tagger')
+
 import stanza
 import requests
 import bs4
