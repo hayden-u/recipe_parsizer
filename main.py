@@ -56,6 +56,7 @@ def recipe_scraper(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     return scraper.instructions_list()
 
+
 # def findStepIngredients(stepClass):
 #     #function will find each individual ingredient in the given step
 #     # then populate the step class ingredient field
@@ -129,6 +130,8 @@ def buildIngredient(ingredient):
     
 def recipe_ingredients(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
+    global recipe_title
+    recipe_title = scraper.title()
     global all_ingredients
     all_ingredients = []
     for i in scraper.ingredients():
@@ -298,10 +301,12 @@ def runChatbot():
             #print("\nWhat, are you baked? You didn't give us a good link! Please try again\n")
             print("\nHmm not sure I can read that link. We recommend you give us a recipe from one of these websites:\nFoodNetwork.com\nAllRecipes.com\nTasteOfHome.com\nDelish.com\n")
             
-    print("\nHoly Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
-
     recipe_ingredients(recipe)
+
+    print("\nHoly Guacamole!", recipe_title, "sounds yummy. To start you off here are the list of ingredients you will need:\n")
+
     printAllIngredients(all_ingredients)
+
 
     new_instructions_list = []
     for instruction in instructions_list:
