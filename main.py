@@ -261,9 +261,8 @@ def related(chat_in):
             for x in i_string:
                 if x in i.food_item:
                     if i.ingredient_text != temp:
-                        if i.ingredient_text is not "recipe":
-                            temp.append(i.ingredient_text)
-                            bool = True
+                        temp.append(i.ingredient_text)
+                        bool = True
         chat_out.append(bool)
 
         if not bool:
@@ -296,7 +295,8 @@ def runChatbot():
             instructions_list = recipe_scraper(recipe)
             booli = False
         except:
-            print("\nWhat, are you baked? You didn't give us a good link! Please try again\n")
+            #print("\nWhat, are you baked? You didn't give us a good link! Please try again\n")
+            print("\nHmm not sure I can read that link. We recommend you give us a recipe from one of these websites:\nFoodNetwork.com\nAllRecipes.com\nTasteOfHome.com\nDelish.com\n")
             
     print("\nHoly Guacamole! That sounds yummy. To start you off here are the list of ingredients you will need:\n")
 
