@@ -69,7 +69,7 @@ print(ingredients)
 print(materials)
 #print(filtered)
 nouns = []
-verbs = []
+#verbs = []
 
 #printTags(spacy_doc)
 
