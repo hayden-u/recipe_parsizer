@@ -126,7 +126,7 @@ def buildIngredient(ingredient):
             i_string = i_string + " " + word.text
     ingredient.food_item = i_string
     return
-
+    
 def recipe_ingredients(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     global all_ingredients
@@ -174,7 +174,7 @@ def related(chat_in):
     exit_conditions = ["quit"]
     help_conditions = ["help"]
 
-    print(chat_in)
+    #print(chat_in)
 
     for i in exit_conditions:
         if i in chat_in:
@@ -191,7 +191,7 @@ def related(chat_in):
         chat_out = []
         chat_out.append("next")
     elif "previous" in chat_in or "back" in chat_in:
-        print(chat_in)
+        #print(chat_in)
         chat_out = []
         chat_out.append("2")
     elif "what" in chat_in and ("ingredient" in chat_in or "ingredients" in chat_in) :
@@ -203,11 +203,27 @@ def related(chat_in):
     elif "how much" in chat_in or "amount" in chat_in or "how many" in chat_in:
         chat_out = []
         chat_out.append("5")
+        bool = False
+        doc = nlp(chat_in.lower())
+        i_string = []
+        
+        for word in doc.sentences[0].words[2:]:
+            if word.xpos == "NN" or word.xpos == "NNS" or word.xpos == "NNP":
+                i_string.append(word.text)
+        #print(i_string)
         for i in all_ingredients:
-            if i.food_item in chat_in:
-                chat_out.append(i.ingredient_text)
-                break
-        chat_out.append("it all")
+            for noun in i_string:
+                if noun in i.food_item:
+            # temp = i.food_item.split(" ")
+            # for word in temp:
+            #     if word in chat_in:
+                    # print("\nNoun:", noun)
+                    # print("i:", i.food_item)
+                    if i.ingredient_text not in chat_out:
+                        chat_out.append(i.ingredient_text)
+                    bool = True
+        if not bool:
+            chat_out.append("it all")
     elif "all" in chat_in and "ingredients" in chat_in:
         chat_out = []
         chat_out.append("6")
@@ -228,10 +244,36 @@ def related(chat_in):
     elif "need" in chat_in or "do I" in chat_in or "call for" in chat_in:
         chat_out = []
         chat_out.append("8")
+
+        bool = False
+
+        doc = nlp(chat_in.lower())
+        i_string = []
+        
+        for word in doc.sentences[0].words[2:]:
+            if word.xpos == "NN" or word.xpos == "NNS" or word.xpos == "NNP":
+                i_string.append(word.text)
+
+        temp = [] 
+
         for i in all_ingredients:
             print(i.food_item)
-            if i.food_item in chat_in:
-                chat_out.append(i.ingredient_text)
+            for x in i_string:
+                if x in i.food_item:
+                    if i.ingredient_text != temp:
+                        if i.ingredient_text is not "recipe":
+                            temp.append(i.ingredient_text)
+                            bool = True
+        chat_out.append(bool)
+
+        if not bool:
+            i_str = " ".join(i_string)
+            chat_out.append(i_str)
+        else:
+            for i in temp:
+                chat_out.append(i)
+        
+
     
     elif "current" in chat_in:
         chat_out = []
@@ -280,7 +322,7 @@ def runChatbot():
         query = related(query)
         #x = "sesame"
         #chatbot exit
-        print(query)
+        #print(query)
         if query[0] == "exit":
             break
         #chatbot help
@@ -305,8 +347,9 @@ def runChatbot():
             print("\nNo problemo. Here are the materials you will need here:\n")
             print(recipe_steps[recipe_pointer].materials)
         elif query[0] == "5" and len(query) >= 2:
-            x = query[1]
-            print("\nYou need", x)
+            l = len(query)
+            for i in range(1, l):
+                print("\nYou need", query[i])
             # for i in all_ingredients:
             #     temp = i.ingredient.split(" ")
             #     for word in temp:
@@ -319,18 +362,18 @@ def runChatbot():
         elif query[0] == "7":
             print("\n", recipe_steps[recipe_pointer])
         elif query[0] == "8": ##pretend x is input of ingredient they are asking for
-            bool = False
-            if len(query) >= 2:
-                x = query[1]
-                for i in all_ingredients:
-                    temp = i.ingredient_text.split(" ")
-                    for word in temp:
-                        if x == word:
-                            bool = True
-            if bool:
-                print("\nYes, this recipe does include", x)
+            bool = query[1]
+            l = len(query)
+            x = query[2]
+            if not bool:
+                print("\nNo, this recipe does not include", x)
             else:
-                print("\nNo, that's not in this recipe")
+                print("\nYes, this recipe does include", x)
+                if l != 3:
+                    for i in range(3, l):
+                        print("&", query[i])
+                    
+                
         elif query[0] == "9" and len(query) >= 2:
             text = query[1]
             print("\nHere's a link to what Google foud as the definition of the action you want clarity on:\n")
