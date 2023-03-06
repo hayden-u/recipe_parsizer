@@ -157,23 +157,15 @@ def setStepFields(step):
     noun_stop_words = ["heat", "temperature", "cool", "garnish", "lengthwise", "degrees"]
     ing_dep_list = ["conj", "dobj", "pobj", "ROOT", "nsubj"]
     #verb_dep_list = ["xcomp"]
-    print("STEP: " + step.step_text)
-
-
-
     spacy_doc = nlp(step.step_text.lower())
-
-
+    
     ingredients = []
     materials = []
     verbs = []
 
-    #spacy_doc = spacy_doc[1:]
-
-
-    print("NOUN PHRASES")
+    #print("NOUN PHRASES")
     for chunk in spacy_doc.noun_chunks:
-        print("TEXT: " + chunk.text, "ROOT: " + chunk.root.text, "ROOT DEP: " + chunk.root.dep_, "ROOT HEAD: " + chunk.root.head.text)
+        #print("TEXT: " + chunk.text, "ROOT: " + chunk.root.text, "ROOT DEP: " + chunk.root.dep_, "ROOT HEAD: " + chunk.root.head.text)
         if any(x == chunk.root.dep_ for x in ing_dep_list) and not any(x in chunk.text for x in noun_stop_words) and chunk.text not in ingredients:
             if chunk.root.text.lower() in food_list and not checkList(chunk.root.text, ingredients):
                 ingredients.append(chunk.text)
@@ -181,12 +173,8 @@ def setStepFields(step):
             if chunk.root.lemma_.lower() in cooking_utensils and not checkList(chunk.root.text, materials):
                 materials.append(chunk.text)
 
-    print("FIRST ITERATION: " + str(ingredients))
-    print("FIRST ITERATION: " + str(materials))
-
-    print("TOKENS")
     for token in spacy_doc:
-        print("TEXT: " + token.text, "HEAD: " + token.head.text, "POS: " + token.pos_, "TAG: " + token.tag_, "DEP: " + token.dep_)
+        #print("TEXT: " + token.text, "HEAD: " + token.head.text, "POS: " + token.pos_, "TAG: " + token.tag_, "DEP: " + token.dep_)
         if token.pos_ == "VERB" and token.dep_ != "xcomp" and token.text not in descriptions:
             verbs.append(token.lemma_)
         if token.pos_ == "NOUN" and token.text.lower() in food_list and token.lemma_ not in ingredients and token.text not in noun_stop_words:
@@ -196,12 +184,10 @@ def setStepFields(step):
             if not checkList(token.text, materials):
                 materials.append(token.text)
 
-    print(ingredients)
-    print(materials)
-    print(verbs)
     step.ingredients = ingredients
     step.materials = materials
     step.actions = verbs
+    return
 
 def buildStepsArray(instructions):
     steps_array = []
