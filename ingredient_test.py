@@ -90,5 +90,6 @@ for instruction in instructions_list:
 recipe_ingredients(recipe)
 for i in all_ingredients:
     print(i)
+    
 #steps = buildStepsArray(new_instructions_list)
 #printSteps(steps)

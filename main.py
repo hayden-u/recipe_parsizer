@@ -56,28 +56,6 @@ def recipe_scraper(recipe_link):
     scraper = scrape_me(recipe_link, wild_mode = True)
     return scraper.instructions_list()
 
-
-# def findStepIngredients(stepClass):
-#     #function will find each individual ingredient in the given step
-#     # then populate the step class ingredient field
-#     text = stepClass.step_text.lower()
-#     document = nlp(text)
-#     ingredient_list = []
-#     for sent in document.sentences:
-#         for word in sent.words:
-#             if word.upos == "NOUN":
-#                 ing_dict = { "text": word.text,
-#                              "id" : word.id,
-#                              "head": word.head}
-#                 ingredient_list.append(ing_dict)
-#     #printPOS(document)
-#     #printRelation(document)
-#     #pos_tagged = nltk.pos_tag(tokenized)
-#     #print(pos_tagged)
-#     #print(ingredient_list)
-#     pass
-
-
 def traverseTree(root, some_list):
     #print(some_list)
     if root.label == "NP":
@@ -333,7 +311,7 @@ def runChatbot():
         #chatbot help
         if query[0] == "help":
             printHelp()
-        if query[0] == "next":
+        elif query[0] == "next":
             if recipe_pointer >= len(recipe_steps) - 1:
                 print("\nWe've reached the end of our recipe, Bon Appetit!")
             else:
