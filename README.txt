@@ -1,5 +1,5 @@
 Recipe Parsizer README
-Callum Bondy, Helena Guarjardo, Hayden Ufberg
+Callum Bondy, Helena Guajardo, Hayden Ufberg
 
 To run our Recipe Chatbot, simply install the requirements.txt file with "pip install -r requirements.txt"
 You will need to be on Python 3.10 or lower in order to run the program.
